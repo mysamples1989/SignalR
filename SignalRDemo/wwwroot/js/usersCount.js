@@ -32,15 +32,15 @@ function rejected() {
 }
 
 connectionUserCount.onclose((error) => {
-    document.body.style.background = "red";
+    //document.body.style.background = "red";
 });
 
 connectionUserCount.onreconnected((connectionId) => {
-    document.body.style.background = "green";
+    //document.body.style.background = "green";
 });
 
 connectionUserCount.onreconnecting((error) => {
-    document.body.style.background = "orange";
+    //document.body.style.background = "orange";
 });
 
 connectionUserCount.start().then(fulfilled, rejected);

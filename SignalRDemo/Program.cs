@@ -12,6 +12,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromSeconds(5);
+        options.LoginPath = "/Identity/Account/Login";
+        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+        options.SlidingExpiration = true;
+});
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
@@ -21,7 +30,12 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddSignalR().AddAzureSignalR(connectionAzureSignalR);
 builder.Services.AddSignalR();
 
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
+
+app.MapHub<UserHub>("/hubs/userCount");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -40,6 +54,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -48,7 +63,6 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
-app.MapHub<UserHub>("/hubs/userCount");
 
 ApplyMigration();
 
